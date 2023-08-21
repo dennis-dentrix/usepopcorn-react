@@ -12,7 +12,23 @@ export function MovieDetails({
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState("");
 
+  useEffect(
+    function () {
+      function callback(e) {
+        if (e.code === "Escape") onCloseMovie();
+      }
+      document.addEventListener("keydown", callback);
+
+      // CLEANUP FUNCTION
+      return function () {
+        document.removeEventListener("keydown", callback);
+      };
+    },
+    [onCloseMovie]
+  );
+
   const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
+
   const watchedUserRating = watched.find(
     (movie) => movie.imdbID === selectedId
   )?.userRating;
@@ -60,6 +76,19 @@ export function MovieDetails({
       getMovieDetails();
     },
     [selectedId]
+  );
+
+  useEffect(
+    function () {
+      if (!title) return;
+      document.title = `Movie | ${title}`;
+
+      // CLEANUP FUNCTION
+      return function () {
+        document.title = "usePopcorn";
+      };
+    },
+    [title]
   );
 
   return (
